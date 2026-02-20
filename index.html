@@ -457,7 +457,7 @@ document.getElementById('btn-host-open').addEventListener('click',function(){
   var d=document.getElementById('h-date').value.trim();
   if(!n||!p){alert('Bitte Namen und Probename eingeben!');return;}
   me.name=n; me.isHost=true;
-  fbDel('/').then(function(){
+  Promise.all([fbDel('/probe'),fbDel('/ratings'),fbDel('/tasters')]).then(function(){
   fbSet('/probe',{name:p,date:d,hostName:n,status:'lobby',currentRound:0,currentBeer:'',roundsClosed:[],published:false}).then(function(){
     fbSet('/tasters/'+safe(n),{name:n,isHost:true});
     session={name:p,date:d};
@@ -466,12 +466,12 @@ document.getElementById('btn-host-open').addEventListener('click',function(){
     refreshLobbyTasters();
     show('s-host-lobby');
   });
-  }); // fbDel
+  });
 }); // btn-host-open
 
 document.getElementById('btn-reset-probe').addEventListener('click',function(){
   if(!confirm('Probe wirklich zurücksetzen? Alle Daten werden gelöscht!'))return;
-  fbDel('/').then(function(){show('s-splash');});
+  Promise.all([fbDel('/probe'),fbDel('/ratings'),fbDel('/tasters')]).then(function(){show('s-splash');});
 });
 
 // ── LOBBY TASTERS ────────────────────────────────────────
