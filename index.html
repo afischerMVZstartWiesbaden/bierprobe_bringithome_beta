@@ -370,7 +370,7 @@ html,body{height:100%;overflow:hidden;background:var(--night);position:fixed;wid
     <div class="lobby-probe-date" id="pub-probe-name">—</div>
   </div>
   <div id="results-public-content"></div>
-  <div class="result-card" id="photo-card" style="margin:6px 20px 32px;">
+  <div class="result-card" id="photo-card" style="margin:6px 20px 32px;display:none;">
     <div class="result-beer">📸 GRUPPENFOTO</div>
     <div id="photo-inner" style="padding:12px;">
       <label style="display:flex;align-items:center;justify-content:center;gap:10px;background:#161c2e;border:1.5px dashed rgba(255,255,255,.2);border-radius:8px;padding:20px 16px;cursor:pointer;font-family:'Special Elite',serif;font-size:15px;color:var(--muted);min-height:64px;">
@@ -743,10 +743,17 @@ function loadPublicResults(){
     var probe=res[1]||{};
     session=probe;
     renderResults('results-public-content',res[0]||{},probe);
-    if(probe.photoLocked){
-      document.getElementById('photo-inner').innerHTML='<div style="text-align:center;padding:20px;font-family:Bebas Neue,cursive;font-size:22px;letter-spacing:3px;color:var(--amber);">📸 PHOTO ERSTELLT</div>';
-    } else if(probe.groupPhoto){
+    var photoCard = document.getElementById('photo-card');
+    if(probe.groupPhoto){
+      // Foto vorhanden: für alle anzeigen (nur lesen)
+      photoCard.style.display='';
       showGroupPhoto(probe.groupPhoto);
+    } else if(me.isHost){
+      // Kein Foto: Upload-Bereich nur für Gastgeber
+      photoCard.style.display='';
+      if(probe.photoLocked){
+        document.getElementById('photo-inner').innerHTML='<div style="text-align:center;padding:20px;font-family:Bebas Neue,cursive;font-size:22px;letter-spacing:3px;color:var(--amber);">📸 PHOTO ERSTELLT</div>';
+      }
     }
   });
 }
